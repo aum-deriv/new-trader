@@ -106,6 +106,46 @@ class DerivAPIService {
       throw error;
     }
   }
+
+  public async getContractsForSymbol(symbol: string): Promise<any> {
+    try {
+      await this.connect();
+
+      return new Promise((resolve, reject) => {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+          reject(new Error('Socket is not connected'));
+          return;
+        }
+
+        const requestId = Math.floor(Math.random() * 1000000);
+        const request = {
+          contracts_for: symbol,
+          currency: 'USD',
+          landing_company: 'svg',
+          product_type: 'basic',
+          req_id: requestId,
+        };
+
+        const handleMessage = (event: MessageEvent) => {
+          const response = JSON.parse(event.data);
+          if (response.req_id === requestId) {
+            this.socket?.removeEventListener('message', handleMessage);
+            if (response.error) {
+              reject(response.error);
+            } else {
+              resolve(response.contracts_for);
+            }
+          }
+        };
+
+        this.socket.addEventListener('message', handleMessage);
+        this.socket.send(JSON.stringify(request));
+      });
+    } catch (error) {
+      console.error('Error in getContractsForSymbol:', error);
+      throw error;
+    }
+  }
 }
 
 export default DerivAPIService;
