@@ -101,19 +101,24 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="trade-container">
-        <TradeSelection
-          market={market}
-          tradeType={tradeType}
-          symbols={symbols}
-          contractTypes={contractTypes}
-          onMarketChange={setMarket}
-          onTradeTypeChange={setTradeType}
-        />
-        <TradeParameters
-          minimumDuration="1 minute"
-          currency="USD"
-        />
+      <div className="trade-top">
+        <div className="trade-container">
+          <TradeSelection
+            market={market}
+            tradeType={tradeType}
+            symbols={symbols}
+            contractTypes={contractTypes}
+            onMarketChange={setMarket}
+            onTradeTypeChange={setTradeType}
+          />
+          <TradeParameters
+            minimumDuration="1 minute"
+            currency="USD"
+          />
+        </div>
+        <div className="purchase-container">
+          {/* Purchase content will go here */}
+        </div>
       </div>
     </div>
   )
