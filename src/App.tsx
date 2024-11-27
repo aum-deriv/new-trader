@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import Dropdown from './components/Dropdown'
-import './components/Dropdown.css'
 import DerivAPIService from './services/DerivAPIService'
 import { ActiveSymbol, ContractType, CombinedContractType } from './types/deriv'
+import TradeSelection from './components/TradeSelection'
+import TradeParameters from './components/TradeParameters'
 
 function App() {
   const [market, setMarket] = useState<string>('')
@@ -91,10 +91,6 @@ function App() {
     fetchData()
   }, [])
 
-  const getContractDisplayName = (contract: CombinedContractType): string => {
-    return contract.contract_category_display;
-  };
-
   if (loading) {
     return <div className="app-container">Loading data...</div>
   }
@@ -105,18 +101,18 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="dropdowns-container">
-        <Dropdown
-          label="Market"
-          options={symbols.map(symbol => symbol.display_name)}
-          value={market}
-          onChange={setMarket}
+      <div className="trade-container">
+        <TradeSelection
+          market={market}
+          tradeType={tradeType}
+          symbols={symbols}
+          contractTypes={contractTypes}
+          onMarketChange={setMarket}
+          onTradeTypeChange={setTradeType}
         />
-        <Dropdown
-          label="Trade Type"
-          options={contractTypes.map(getContractDisplayName)}
-          value={tradeType}
-          onChange={setTradeType}
+        <TradeParameters
+          minimumDuration="1 minute"
+          currency="USD"
         />
       </div>
     </div>

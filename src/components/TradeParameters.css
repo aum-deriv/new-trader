@@ -1,0 +1,88 @@
+.trade-parameters {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+}
+
+.duration-container,
+.amount-container {
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.duration-row,
+.amount-row {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+.duration-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duration-input,
+.amount-input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 120px;
+}
+
+.validation-message {
+  font-size: 12px;
+  color: #666;
+}
+
+.amount-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.currency-label {
+  font-size: 14px;
+  color: #333;
+}
+
+.equals-container {
+  display: flex;
+  align-items: center;
+}
+
+.equals-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.equals-checkbox {
+  margin: 0;
+  cursor: pointer;
+}
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 12px;
+  cursor: help;
+}
+
+.info-icon:hover {
+  background-color: #e0e0e0;
+}
