@@ -168,6 +168,11 @@ function TradeTop({ onSymbolSelect }: TradeTopProps) {
     fetchContractTypes(symbol.symbol)
   }
 
+  const handleTradeTypeChange = (newTradeType: string) => {
+    console.log('Trade type changed in TradeTop:', newTradeType)
+    setTradeType(newTradeType)
+  }
+
   if (loading) {
     return <div className="trade-top">Loading data...</div>
   }
@@ -178,22 +183,26 @@ function TradeTop({ onSymbolSelect }: TradeTopProps) {
 
   return (
     <div className="trade-top">
-      <TradeSelection
-        market={market}
-        tradeType={tradeType}
-        symbols={symbols}
-        contractTypes={contractTypes}
-        onMarketChange={handleMarketChange}
-        onTradeTypeChange={setTradeType}
-        onSymbolSelect={handleSymbolSelect}
-      />
-      {selectedSymbol && (
-        <TradeParameters
-          minimumDuration={selectedContract?.min_contract_duration ?? ''}
-          currency="USD"
-          defaultStake={selectedContract?.default_stake ?? 0}
+      <div className="trade-container">
+        <TradeSelection
+          market={market}
+          tradeType={tradeType}
+          symbols={symbols}
+          contractTypes={contractTypes}
+          onMarketChange={handleMarketChange}
+          onTradeTypeChange={handleTradeTypeChange}
+          onSymbolSelect={handleSymbolSelect}
         />
-      )}
+        {selectedSymbol && selectedContract && (
+          <div className="parameters-container">
+            <TradeParameters
+              minimumDuration={selectedContract.min_contract_duration}
+              currency={selectedSymbol.pip_size}
+              defaultStake={selectedContract.default_stake}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

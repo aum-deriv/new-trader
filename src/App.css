@@ -1,27 +1,27 @@
-.app-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff;
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
 .app {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  padding: 20px;
   gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .trade-top {
+  width: 100%;
   flex: 0 0 auto;
 }
 
 .trade-bottom {
+  width: 100%;
   flex: 1;
-  min-height: 400px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 20px;
-  background: white;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
 }

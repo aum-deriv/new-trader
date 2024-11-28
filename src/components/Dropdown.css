@@ -4,6 +4,12 @@
   gap: 0.5rem;
 }
 
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .dropdown-label {
   font-size: 0.875rem;
   font-weight: 500;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { TickData } from '../types/deriv'
 import DerivAPIService from '../services/DerivAPIService'
+import './TradeBottom.css'
 
 interface TradeBottomProps {
   symbol: string;
@@ -78,37 +79,33 @@ function TradeBottom({ symbol }: TradeBottomProps) {
   return (
     <div className="trade-bottom">
       <h3>Price Chart for {symbol}</h3>
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart 
-          data={ticksData}
-          margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="time"
-            interval="preserveStartEnd"
-            minTickGap={50}
-            label={{ value: 'Time', position: 'bottom', offset: 0 }}
-          />
-          <YAxis 
-            domain={['auto', 'auto']}
-            tickFormatter={(value) => value.toFixed(2)}
-            label={{ value: 'Price', angle: -90, position: 'insideLeft' }}
-          />
-          <Tooltip 
-            formatter={(value: number) => value.toFixed(5)}
-            labelFormatter={(label) => `Time: ${label}`}
-          />
-          <Line
-            name="Ask"
-            dataKey="ask"
-            stroke="#2196F3"
-            dot={false}
-            isAnimationActive={false}
-            strokeWidth={2}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="chart-container">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={ticksData}
+            margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="time"
+              interval="preserveStartEnd"
+              minTickGap={50}
+            />
+            <YAxis
+              domain={['auto', 'auto']}
+              tickFormatter={(value) => value.toFixed(2)}
+            />
+            <Tooltip />
+            <Line
+              name="Ask"
+              dataKey="ask"
+              stroke="#2196F3"
+              dot={false}
+              isAnimationActive={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   )
 }
