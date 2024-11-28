@@ -22,10 +22,10 @@ function TradeBottom({ symbol }: TradeBottomProps) {
     if (!symbol) return
 
     console.log('Subscribing to ticks for symbol:', symbol)
+    let cleanup: (() => void) | undefined;
     
     const handleTicksStream = (response: any) => {
-      console.log('Received tick data:', response)
-      if (response.tick) {
+      if (response.msg_type === 'tick' && response.tick) {
         const tick = response.tick as TickData
         const time = new Date(tick.epoch * 1000).toLocaleTimeString()
         
@@ -35,7 +35,6 @@ function TradeBottom({ symbol }: TradeBottomProps) {
             ask: tick.ask,
             bid: tick.bid
           }]
-          // Keep last 50 data points for better visualization
           return newData.slice(-50)
         })
       }
@@ -49,6 +48,7 @@ function TradeBottom({ symbol }: TradeBottomProps) {
         if (subscription) {
           console.log('Unsubscribing from previous subscription:', subscription)
           await derivAPI.unsubscribe(subscription)
+          setSubscription(null)
         }
 
         console.log('Subscribing to new symbol:', symbol)
@@ -58,7 +58,9 @@ function TradeBottom({ symbol }: TradeBottomProps) {
         if (response.subscription?.id) {
           setSubscription(response.subscription.id)
         }
-        derivAPI.onMessage(handleTicksStream)
+        
+        // Store cleanup function
+        cleanup = derivAPI.onMessage(handleTicksStream)
       } catch (error) {
         console.error('Error subscribing to ticks:', error)
       }
@@ -71,8 +73,11 @@ function TradeBottom({ symbol }: TradeBottomProps) {
         console.log('Cleaning up subscription:', subscription)
         DerivAPIService.getInstance().unsubscribe(subscription)
       }
+      if (cleanup) {
+        cleanup()
+      }
     }
-  }, [symbol, subscription])
+  }, [symbol])
 
   console.log('Current ticks data:', ticksData)
 

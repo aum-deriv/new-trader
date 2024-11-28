@@ -1,4 +1,5 @@
 export interface ActiveSymbol {
+  pip_size: string;
   allow_forward_starting: number;
   display_name: string;
   exchange_is_open: number;

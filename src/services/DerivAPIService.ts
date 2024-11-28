@@ -3,6 +3,7 @@ class DerivAPIService {
   private socket: WebSocket | null = null;
   private app_id = '1089'; // Demo app_id, replace with your actual app_id
   private connectionPromise: Promise<void> | null = null;
+  private messageHandlers: Set<(response: any) => void> = new Set();
 
   private constructor() {
     this.connect();
@@ -35,6 +36,11 @@ class DerivAPIService {
         console.log('WebSocket connection closed');
         this.connectionPromise = null;
       };
+
+      this.socket.onmessage = (event) => {
+        const response = JSON.parse(event.data);
+        this.messageHandlers.forEach(handler => handler(response));
+      };
     });
 
     return this.connectionPromise;
@@ -55,17 +61,24 @@ class DerivAPIService {
           product_type: 'basic'
         };
 
-        const handleMessage = (msg: MessageEvent) => {
-          const response = JSON.parse(msg.data);
+        const handleMessage = (response: any) => {
           if (response.error) {
             reject(response.error);
-          } else if (response.active_symbols) {
-            this.socket?.removeEventListener('message', handleMessage);
+            return;
+          }
+          if (response.active_symbols) {
             resolve(response.active_symbols);
           }
         };
 
-        this.socket.addEventListener('message', handleMessage);
+        // Add temporary handler for subscription response
+        this.messageHandlers.add(handleMessage);
+        
+        // Remove it after getting the response
+        setTimeout(() => {
+          this.messageHandlers.delete(handleMessage);
+        }, 5000);
+
         this.socket.send(JSON.stringify(request));
       });
     } catch (error) {
@@ -88,17 +101,24 @@ class DerivAPIService {
           contracts_for_company: 1
         };
 
-        const handleMessage = (msg: MessageEvent) => {
-          const response = JSON.parse(msg.data);
+        const handleMessage = (response: any) => {
           if (response.error) {
             reject(response.error);
-          } else if (response.contracts_for_company) {
-            this.socket?.removeEventListener('message', handleMessage);
+            return;
+          }
+          if (response.contracts_for_company) {
             resolve(response.contracts_for_company);
           }
         };
 
-        this.socket.addEventListener('message', handleMessage);
+        // Add temporary handler for subscription response
+        this.messageHandlers.add(handleMessage);
+        
+        // Remove it after getting the response
+        setTimeout(() => {
+          this.messageHandlers.delete(handleMessage);
+        }, 5000);
+
         this.socket.send(JSON.stringify(request));
       });
     } catch (error) {
@@ -126,10 +146,8 @@ class DerivAPIService {
           req_id: requestId,
         };
 
-        const handleMessage = (event: MessageEvent) => {
-          const response = JSON.parse(event.data);
+        const handleMessage = (response: any) => {
           if (response.req_id === requestId) {
-            this.socket?.removeEventListener('message', handleMessage);
             if (response.error) {
               reject(response.error);
             } else {
@@ -138,7 +156,14 @@ class DerivAPIService {
           }
         };
 
-        this.socket.addEventListener('message', handleMessage);
+        // Add temporary handler for subscription response
+        this.messageHandlers.add(handleMessage);
+        
+        // Remove it after getting the response
+        setTimeout(() => {
+          this.messageHandlers.delete(handleMessage);
+        }, 5000);
+
         this.socket.send(JSON.stringify(request));
       });
     } catch (error) {
@@ -165,22 +190,32 @@ class DerivAPIService {
         this.socket.send(JSON.stringify(request));
         
         const handleResponse = (response: any) => {
-          const data = JSON.parse(response.data);
-          if (data.error) {
-            this.socket?.removeEventListener('message', handleResponse);
-            reject(data.error);
-          } else if (data.msg_type === 'tick') {
-            this.socket?.removeEventListener('message', handleResponse);
-            resolve(data);
+          if (response.error) {
+            reject(response.error);
+            return;
+          }
+          if (response.msg_type === 'tick') {
+            resolve(response);
           }
         };
 
-        this.socket.addEventListener('message', handleResponse);
+        // Add temporary handler for subscription response
+        this.messageHandlers.add(handleResponse);
+        
+        // Remove it after getting the response
+        setTimeout(() => {
+          this.messageHandlers.delete(handleResponse);
+        }, 5000);
       });
     } catch (error) {
       console.error('Error in subscribeTicks:', error);
       throw error;
     }
+  }
+
+  public onMessage(callback: (response: any) => void): () => void {
+    this.messageHandlers.add(callback);
+    return () => this.messageHandlers.delete(callback);
   }
 
   public async unsubscribe(subscriptionId: string): Promise<void> {
@@ -200,19 +235,6 @@ class DerivAPIService {
       console.error('Error in unsubscribe:', error);
       throw error;
     }
-  }
-
-  public onMessage(callback: (response: any) => void): void {
-    if (!this.socket) {
-      throw new Error('Socket is not initialized');
-    }
-
-    const handleMessage = (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
-      callback(data);
-    };
-
-    this.socket.addEventListener('message', handleMessage);
   }
 }
 
