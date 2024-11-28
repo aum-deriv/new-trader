@@ -8,7 +8,7 @@ interface TradeParametersProps {
   defaultStake: number;
 }
 
-function TradeParameters({ minimumDuration, currency, defaultStake }: TradeParametersProps) {
+function TradeParameters({ minimumDuration, defaultStake }: TradeParametersProps) {
   const [durationType, setDurationType] = useState('Duration');
   const [timeUnit, setTimeUnit] = useState('Minutes');
   const [duration, setDuration] = useState('');
