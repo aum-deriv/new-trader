@@ -5,7 +5,7 @@ import './TradeParameters.css';
 interface TradeParametersProps {
   minimumDuration: string;
   currency: string;
-  defaultStake: string;
+  defaultStake: number;
 }
 
 function TradeParameters({ minimumDuration, currency, defaultStake }: TradeParametersProps) {
@@ -13,7 +13,7 @@ function TradeParameters({ minimumDuration, currency, defaultStake }: TradeParam
   const [timeUnit, setTimeUnit] = useState('Minutes');
   const [duration, setDuration] = useState('');
   const [tradeType, setTradeType] = useState('Stake');
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(0);
   const [allowEquals, setAllowEquals] = useState(false);
   const [startTime, setStartTime] = useState('Now');
 
@@ -98,9 +98,9 @@ function TradeParameters({ minimumDuration, currency, defaultStake }: TradeParam
           />
           <div className="amount-input-container">
             <input
-              type="text"
+              type="number"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setAmount(Number(e.target.value))}
               className="amount-input"
             />
             <span className="currency-label">{currency}</span>

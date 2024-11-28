@@ -46,12 +46,17 @@ function TradeTop() {
           contract_category: category,
           contract_category_display: getDisplayName(category),
           barrier_category: contract.barrier_category,
-          sentiments: [contract.sentiment]
+          sentiments: [{ contract_type: contract.contract_type, sentiment: contract.sentiment }],
+          display_name: contract.display_name,
+          default_stake: contract.default_stake,
+          min_contract_duration: contract.min_contract_duration,
+          name: contract.name,
+          title: contract.title,
         })
       } else {
         const existing = contractMap.get(category)!
-        if (!existing.sentiments.includes(contract.sentiment)) {
-          existing.sentiments.push(contract.sentiment)
+        if (!existing.sentiments.includes({ contract_type: contract.contract_type, sentiment: contract.sentiment })) {
+          existing.sentiments.push({ contract_type: contract.contract_type, sentiment: contract.sentiment })
         }
       }
     })
@@ -164,7 +169,7 @@ function TradeTop() {
         <TradeParameters
           minimumDuration={selectedContract?.min_contract_duration ?? ''}
           currency="USD"
-          defaultStake={selectedContract?.default_stake ?? '10'}
+          defaultStake={selectedContract?.default_stake ?? 0}
         />
       </div>
       <div className="purchase-container">

@@ -13,8 +13,13 @@ export interface ActiveSymbol {
 }
 
 export interface ContractType {
+  barrier_category: string;
   contract_category_display: string;
+  contract_category: string;
+  contract_type: string;
   display_name: string;
+  default_stake: number;
+  min_contract_duration: string;
   name: string;
   sentiment: string;
   title: string;
@@ -23,4 +28,16 @@ export interface ContractType {
 export interface ContractsForCompany {
   available: ContractType[];
   unavailable: ContractType[];
+}
+
+export interface CombinedContractType {
+  barrier_category: string;
+  contract_category_display: string;
+  contract_category: string;
+  display_name: string;
+  default_stake: number;
+  min_contract_duration: string;
+  name: string;
+  sentiments: Array<{contract_type: string, sentiment: string}>;
+  title: string;
 }
