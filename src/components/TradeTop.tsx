@@ -140,6 +140,11 @@ function TradeTop({ onSymbolSelect }: TradeTopProps) {
         if (activeSymbols.length > 0) {
           const firstSymbol = activeSymbols[0]
           setMarket(firstSymbol.display_name)
+          
+          // First fetch contract types
+          await fetchContractTypes(firstSymbol.symbol)
+          
+          // Then set selected symbol which will trigger subscription
           setSelectedSymbol(firstSymbol)
         }
         if (combinedTypes.length > 0) {
@@ -156,16 +161,24 @@ function TradeTop({ onSymbolSelect }: TradeTopProps) {
     fetchData()
   }, [])
 
+  // Only trigger symbol selection after contract types are fetched
+  useEffect(() => {
+    if (selectedSymbol && contractTypes.length > 0) {
+      onSymbolSelect(selectedSymbol)
+    }
+  }, [selectedSymbol, contractTypes, onSymbolSelect])
+
   const handleMarketChange = (newMarket: string) => {
     console.log('Market changed in TradeTop:', newMarket)
     setMarket(newMarket)
   }
 
-  const handleSymbolSelect = (symbol: ActiveSymbol) => {
+  const handleSymbolSelect = async (symbol: ActiveSymbol) => {
     console.log('Symbol selected in TradeTop:', symbol)
+    // First fetch contract types
+    await fetchContractTypes(symbol.symbol)
+    // Then set selected symbol which will trigger subscription
     setSelectedSymbol(symbol)
-    onSymbolSelect(symbol)
-    fetchContractTypes(symbol.symbol)
   }
 
   const handleTradeTypeChange = (newTradeType: string) => {
