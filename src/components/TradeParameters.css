@@ -21,7 +21,12 @@
 .amount-row {
   display: flex;
   align-items: start;
-  gap: 10px;
+  gap: 10px; 
+}
+
+.amount-row {
+  padding: 15px;
+
 }
 
 .duration-input-container {

@@ -103,7 +103,7 @@ function TradeParameters({ minimumDuration, currency, defaultStake }: TradeParam
               onChange={(e) => setAmount(Number(e.target.value))}
               className="amount-input"
             />
-            <span className="currency-label">{currency}</span>
+            <span className="currency-label">USD</span>
           </div>
         </div>
       </div>
