@@ -5,7 +5,11 @@ import TradeSelection from './TradeSelection'
 import TradeParameters from './TradeParameters'
 import './TradeTop.css'
 
-function TradeTop() {
+interface TradeTopProps {
+  onSymbolSelect: (symbol: ActiveSymbol | null) => void;
+}
+
+function TradeTop({ onSymbolSelect }: TradeTopProps) {
   const [market, setMarket] = useState<string>('')
   const [tradeType, setTradeType] = useState<string>('')
   const [symbols, setSymbols] = useState<ActiveSymbol[]>([])
@@ -105,6 +109,17 @@ function TradeTop() {
     }
   }
 
+  const fetchContractTypes = async (symbol: string) => {
+    try {
+      const derivAPI = DerivAPIService.getInstance()
+      const response = await derivAPI.getContractsForSymbol(symbol)
+      const combinedTypes = combineContractTypes(response.available)
+      setContractTypes(combinedTypes)
+    } catch (err) {
+      console.error('Error fetching contract types:', err)
+    }
+  }
+
   useEffect(() => {
     updateSelectedContracts()
   }, [selectedSymbol, tradeType])
@@ -142,9 +157,15 @@ function TradeTop() {
   }, [])
 
   const handleMarketChange = (newMarket: string) => {
+    console.log('Market changed in TradeTop:', newMarket)
     setMarket(newMarket)
-    const symbol = symbols.find(s => s.display_name === newMarket)
-    setSelectedSymbol(symbol || null)
+  }
+
+  const handleSymbolSelect = (symbol: ActiveSymbol) => {
+    console.log('Symbol selected in TradeTop:', symbol)
+    setSelectedSymbol(symbol)
+    onSymbolSelect(symbol)
+    fetchContractTypes(symbol.symbol)
   }
 
   if (loading) {
@@ -157,24 +178,22 @@ function TradeTop() {
 
   return (
     <div className="trade-top">
-      <div className="trade-container">
-        <TradeSelection
-          market={market}
-          tradeType={tradeType}
-          symbols={symbols}
-          contractTypes={contractTypes}
-          onMarketChange={handleMarketChange}
-          onTradeTypeChange={setTradeType}
-        />
+      <TradeSelection
+        market={market}
+        tradeType={tradeType}
+        symbols={symbols}
+        contractTypes={contractTypes}
+        onMarketChange={handleMarketChange}
+        onTradeTypeChange={setTradeType}
+        onSymbolSelect={handleSymbolSelect}
+      />
+      {selectedSymbol && (
         <TradeParameters
           minimumDuration={selectedContract?.min_contract_duration ?? ''}
           currency="USD"
           defaultStake={selectedContract?.default_stake ?? 0}
         />
-      </div>
-      <div className="purchase-container">
-        {/* Purchase content will go here */}
-      </div>
+      )}
     </div>
   )
 }

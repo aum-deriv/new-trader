@@ -146,6 +146,74 @@ class DerivAPIService {
       throw error;
     }
   }
+
+  public async subscribeTicks(symbol: string): Promise<any> {
+    try {
+      await this.connect();
+
+      return new Promise((resolve, reject) => {
+        if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+          reject(new Error('Socket is not connected'));
+          return;
+        }
+
+        const request = {
+          ticks: symbol,
+          subscribe: 1
+        };
+
+        this.socket.send(JSON.stringify(request));
+        
+        const handleResponse = (response: any) => {
+          const data = JSON.parse(response.data);
+          if (data.error) {
+            this.socket?.removeEventListener('message', handleResponse);
+            reject(data.error);
+          } else if (data.msg_type === 'tick') {
+            this.socket?.removeEventListener('message', handleResponse);
+            resolve(data);
+          }
+        };
+
+        this.socket.addEventListener('message', handleResponse);
+      });
+    } catch (error) {
+      console.error('Error in subscribeTicks:', error);
+      throw error;
+    }
+  }
+
+  public async unsubscribe(subscriptionId: string): Promise<void> {
+    try {
+      await this.connect();
+
+      if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+        throw new Error('Socket is not connected');
+      }
+
+      const request = {
+        forget: subscriptionId
+      };
+
+      this.socket.send(JSON.stringify(request));
+    } catch (error) {
+      console.error('Error in unsubscribe:', error);
+      throw error;
+    }
+  }
+
+  public onMessage(callback: (response: any) => void): void {
+    if (!this.socket) {
+      throw new Error('Socket is not initialized');
+    }
+
+    const handleMessage = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
+      callback(data);
+    };
+
+    this.socket.addEventListener('message', handleMessage);
+  }
 }
 
 export default DerivAPIService;

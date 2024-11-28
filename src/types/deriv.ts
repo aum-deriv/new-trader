@@ -41,3 +41,20 @@ export interface CombinedContractType {
   sentiments: Array<{contract_type: string, sentiment: string}>;
   title: string;
 }
+
+export interface TickData {
+  epoch: number;
+  id: string;
+  pip_size: number;
+  ask: number;
+  bid: number;
+  quote: number;
+  symbol: string;
+}
+
+export interface TicksStreamResponse {
+  subscription?: {
+    id: string;
+  };
+  tick?: TickData;
+}

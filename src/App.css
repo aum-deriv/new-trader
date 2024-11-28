@@ -4,3 +4,24 @@
   padding: 20px;
   background-color: #fff;
 }
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  gap: 20px;
+}
+
+.trade-top {
+  flex: 0 0 auto;
+}
+
+.trade-bottom {
+  flex: 1;
+  min-height: 400px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px;
+  background: white;
+}

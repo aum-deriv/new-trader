@@ -9,6 +9,7 @@ interface TradeSelectionProps {
   contractTypes: CombinedContractType[]
   onMarketChange: (value: string) => void
   onTradeTypeChange: (value: string) => void
+  onSymbolSelect: (symbol: ActiveSymbol) => void
 }
 
 function TradeSelection({
@@ -17,11 +18,24 @@ function TradeSelection({
   symbols,
   contractTypes,
   onMarketChange,
-  onTradeTypeChange
+  onTradeTypeChange,
+  onSymbolSelect
 }: TradeSelectionProps) {
   const getContractDisplayName = (contract: CombinedContractType): string => {
     return contract.contract_category_display;
   };
+
+  const handleMarketChange = (value: string) => {
+    console.log('Market changed in TradeSelection:', value)
+    onMarketChange(value)
+    const selectedSymbol = symbols.find(s => s.display_name === value)
+    console.log('Found symbol:', selectedSymbol)
+    if (selectedSymbol) {
+      onSymbolSelect(selectedSymbol)
+    }
+  };
+
+  console.log('TradeSelection render - symbols:', symbols, 'market:', market)
 
   return (
     <div className="dropdowns-container">
@@ -29,7 +43,7 @@ function TradeSelection({
         label="Market"
         options={symbols.map(symbol => symbol.display_name)}
         value={market}
-        onChange={onMarketChange}
+        onChange={handleMarketChange}
       />
       <Dropdown
         label="Trade Type"

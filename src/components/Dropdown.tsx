@@ -9,7 +9,7 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ label, options, value, onChange }) => {
   return (
-    <div className="dropdown-container">
+    <div className="dropdown">
       <label className="dropdown-label">{label}</label>
       <select 
         className="dropdown-select"
